@@ -1,2 +1,90 @@
-All sources were properly cited. Implementations and analysis represent original work. No AI
-generated content was copied without attribution or adaptation
+STEP 1: PROBLEM DEFINITION
+Business Context
+A mid-sized e-commerce company selling consumer electronics. The focus is on Sales and Marketing Analytics.
+
+Data Challenge
+We have sales data from different regions and periods but lack insights into product performance, customer behavior, and sales trends.
+
+Expected Outcome
+Use SQL JOINs and window functions to find top products, track sales trends, and segment customers to improve marketing and inventory decisions.
+STEP 2: SUCCESS CRITERIA
+1.	Identify the top 5 products per region by total revenue → RANK()
+2.	Calculate running monthly sales totals per region → SUM() OVER()
+3.	Measure month-over-month sales growth → LAG()
+4.	Segment customers into quartiles based on total spending → NTILE(4)
+5.	Compute a rolling three-month average of sales → AVG() OVER()
+
+STEP 3: DATABASE SCHEMA DESIGN
+Tables Overview
+We design three related tables with PKs and FKs.
+ 
+ER Diagram
+ 
+CUSTOMERS ────< SALES >──── PRODUCTS
+
+STEP 4:  SQL JOINS IMPLEMENTATION
+INNER JOIN
+Retrieve transactions with valid customers and products
+ 
+Business Interpretation:
+This query shows only valid transactions where both customer and product exist. It ensures data accuracy for revenue analysis.
+LEFT JOIN
+Identify customers who never made a transaction
+ 
+Business Interpretation:
+These customers represent inactive users who may be targeted with promotions or re-engagement campaigns.
+
+RIGHT JOIN
+Detect products with no sales activity
+ 
+Business Interpretation:
+Unsold products may indicate pricing issues, low demand, or poor marketing visibility.
+
+FULL OUTER JOIN
+Compare customers and products including unmatched records
+ 
+Business Interpretation:
+This provides a complete view of matched and unmatched customers and transactions.
+SELF JOIN
+Compare customers within the same region
+ 
+Business Interpretation:
+Helps identify customers in the same region for regional marketing or comparative behavior analysis.
+
+STEP 5:  WINDOW FUNCTIONS IMPLEMENTATION
+ Ranking Functions
+Top customers by revenue
+ Interpretation:
+Ranks customers based on spending, enabling identification of top-value customers.
+
+Aggregate Window Functions
+Running monthly sales totals
+ Interpretation:
+Shows how revenue accumulates over time, revealing sales momentum and trends.
+
+Navigation Functions
+Month-over-month growth
+ Interpretation:
+Allows comparison between consecutive months to identify growth or decline.
+Distribution Functions
+Customer segmentation
+ Interpretation:
+Segments customers into four value groups for targeted marketing strategies.
+
+STEP 7: RESULTS ANALYSIS
+
+Descriptive 
+Top customers and products generated a disproportionate share of revenue, while some products and customers showed no activity.
+Diagnostic 
+High-ranking customers purchase frequently and in larger quantities, while low-performing products lack demand or exposure.
+Prescriptive 
+Focus marketing efforts on high-value customer quartiles, discontinue or reprice underperforming products, and target inactive customers with promotions.
+
+STEP 8: REFERENCES
+•	Oracle SQL Documentation
+•	PostgreSQL Window Functions Guide
+•	W3Schools SQL Analytics
+•	Class lecture Notes.
+
+All sources were properly cited. Implementations and analysis represent original work. No AI generated content was copied without attribution or adaptation.
+
