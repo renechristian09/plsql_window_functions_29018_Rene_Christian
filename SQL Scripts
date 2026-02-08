@@ -1,0 +1,107 @@
+-- Step 3 DATABASE SCHEMA DESIGN
+
+--Customers
+
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    region VARCHAR(50)
+);
+
+--Products
+
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(100),
+    category VARCHAR(50),
+    price DECIMAL(10,2)
+);
+
+--Sales
+
+CREATE TABLE sales (
+    sale_id INT PRIMARY KEY,
+    customer_id INT,
+    product_id INT,
+    sale_date DATE,
+    quantity INT,
+    total_amount DECIMAL(10,2),
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
+--STEP 4 SQL JOINS
+
+--INNER JOIN
+
+SELECT c.customer_name, p.product_name, s.total_amount
+FROM sales s
+INNER JOIN customers c ON s.customer_id = c.customer_id
+INNER JOIN products p ON s.product_id = p.product_id;
+
+--LEFT JOIN
+
+SELECT c.customer_name
+FROM customers c
+LEFT JOIN sales s ON c.customer_id = s.customer_id
+WHERE s.sale_id IS NULL;
+
+-- RIGHT JOIN
+
+SELECT p.product_name
+FROM sales s
+RIGHT JOIN products p ON s.product_id = p.product_id
+WHERE s.sale_id IS NULL;
+
+--FULL OUTER JOIN
+
+SELECT c.customer_name, s.sale_id
+FROM customers c
+FULL OUTER JOIN sales s ON c.customer_id = s.customer_id;
+
+--SELF JOIN
+
+SELECT a.customer_name AS customer1, b.customer_name AS customer2, a.region
+FROM customers a
+JOIN customers b
+ON a.region = b.region
+AND a.customer_id <> b.customer_id;
+
+--Step 5: Window Functions Implementation
+
+--Ranking Functions
+
+SELECT customer_id,
+       SUM(total_amount) AS total_spent,
+       RANK() OVER (ORDER BY SUM(total_amount) DESC) AS revenue_rank
+FROM sales
+GROUP BY customer_id;
+
+--Aggregate Window Functions
+
+SELECT sale_date,
+       SUM(total_amount) AS daily_sales,
+       SUM(SUM(total_amount)) OVER (
+           ORDER BY sale_date
+           ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+       ) AS running_total
+FROM sales
+GROUP BY sale_date;
+
+--Navigation Functions
+
+SELECT sale_date,
+       SUM(total_amount) AS monthly_sales,
+       LAG(SUM(total_amount)) OVER (ORDER BY sale_date) AS previous_month_sales
+FROM sales
+GROUP BY sale_date;
+
+--Distribution Functions
+
+SELECT customer_id,
+       SUM(total_amount) AS total_spent,
+       NTILE(4) OVER (ORDER BY SUM(total_amount) DESC) AS spending_quartile
+FROM sales
+GROUP BY customer_id;
+
+
